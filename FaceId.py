@@ -16,7 +16,7 @@ detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalfac
 def cadastrar_rosto(nome):
     webcam = cv2.VideoCapture(0)
     count = 0
-    while count < 50:
+    while count < 250:
         _, frame = webcam.read()
         cinza = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         rostos = detector.detectMultiScale(cinza, 1.3, 5)
@@ -68,19 +68,19 @@ def reconhecer_rosto():
     recognizer.read(ARQUIVO_MODELO)
 
     nomes = {}
-    with open("face_id/nomes.txt") as f:
+    with open("rosto_autorizados/nomes.txt") as f:
         for linha in f:
             idx, nome = linha.strip().split(":")
             nomes[int(idx)] = nome
 
-    porta = "/dev/ttyUSB0"  # ou "COM3" no Windows
-    velocidade = 9600
-    try:
-        arduino = serial.Serial(porta, velocidade, timeout=1)
-        sleep(2)
-    except:
-        print("Não foi possível conectar ao Arduino.")
-        arduino = None
+    # porta = "/dev/ttyUSB0"  # ou "COM3" no Windows
+    # velocidade = 9600
+    # try:
+    #     arduino = serial.Serial(porta, velocidade, timeout=1)
+    #     sleep(2)
+    # except:
+    #     print("Não foi possível conectar ao Arduino.")
+    #     arduino = None
 
     webcam = cv2.VideoCapture(0)
     print("Pressione ESC para sair.")
@@ -97,14 +97,14 @@ def reconhecer_rosto():
             rosto = cinza[y:y+h, x:x+w]
             id_predito, confianca = recognizer.predict(rosto)
             nome = nomes.get(id_predito, "Desconhecido")
-            cor = (0, 255, 0) if confianca < 80 else (0, 0, 255)
-            texto = f"{nome} ({int(confianca)})" if confianca < 80 else "Desconhecido"
+            cor = (0, 255, 0) if confianca < 60 else (0, 0, 255)
+            texto = f"{nome} ({int(confianca)})" if confianca < 60 else "Desconhecido"
 
-            if arduino:
-                if confianca < 80:
-                    arduino.write(b'A')  # Acende LED
-                else:
-                    arduino.write(b'a')  # Apaga LED
+            # if arduino:
+            #     if confianca < 80:
+            #         arduino.write(b'A')  # Acende LED
+            #     else:
+            #         arduino.write(b'a')  # Apaga LED
 
             cv2.rectangle(frame, (x, y), (x+w, y+h), cor, 2)
             cv2.putText(frame, texto, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, cor, 2)
@@ -115,8 +115,8 @@ def reconhecer_rosto():
 
     webcam.release()
     cv2.destroyAllWindows()
-    if arduino:
-        arduino.close()
+    # if arduino:
+    #     arduino.close()
 
 
 # Menu simples
