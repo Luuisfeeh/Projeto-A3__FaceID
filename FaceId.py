@@ -76,7 +76,7 @@ def reconhecer_rosto():
     # porta = "/dev/ttyUSB0"  # ou "COM3" no Windows
     # velocidade = 9600
     # try:
-    #     arduino = serial.Serial(porta, velocidade, timeout=1)
+    #     arduino = serial.Serial(porta, velocidade)
     #     sleep(2)
     # except:
     #     print("Não foi possível conectar ao Arduino.")
@@ -101,10 +101,10 @@ def reconhecer_rosto():
             texto = f"{nome} ({int(confianca)})" if confianca < 60 else "Desconhecido"
 
             # if arduino:
-            #     if confianca < 80:
-            #         arduino.write(b'A')  # Acende LED
+            #     if confianca < 60:
+            #         arduino.write(b'CONHECIDO')  # Acende LED
             #     else:
-            #         arduino.write(b'a')  # Apaga LED
+            #         arduino.write(b'DESCONHECIDO')  # Apaga LED
 
             cv2.rectangle(frame, (x, y), (x+w, y+h), cor, 2)
             cv2.putText(frame, texto, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, cor, 2)
